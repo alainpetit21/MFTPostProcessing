@@ -26,7 +26,7 @@ def main():
     """
 
     # Read the CSV File
-    with open(f"./data/modifiedFiles.csv", mode="r", newline="\n") as fileInput:
+    with open(f"./data/DeletedFiles_E.csv", mode="r", newline="\n") as fileInput:
         objReader = csv.reader(fileInput)
 
         next(objReader)     # Skip header wor
