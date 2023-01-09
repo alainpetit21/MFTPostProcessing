@@ -100,10 +100,6 @@ def main(hostname, filenameIn, filenameOut, dateStart, dateEnd):
 
 
 if __name__ == '__main__':
-    main("JF", f"./data/output_968.csv", f"./data/output_968.json",
-         datetime.strptime("2017-07-28T10:00:00.000000", "%Y-%m-%dT%H:%M:%S.%f"),
-         datetime.strptime("2017-07-28T11:00:00.000000", "%Y-%m-%dT%H:%M:%S.%f"))
-
-    main("JF", f"./data/output_212569.csv", f"./data/output_212569.json",
-         datetime.strptime("2021-06-07T09:30:00.000000", "%Y-%m-%dT%H:%M:%S.%f"),
-         datetime.strptime("2021-06-07T10:30:00.000000", "%Y-%m-%dT%H:%M:%S.%f"))
+    main("07", f"./data/output_07.csv", f"./data/output_07.json",
+         datetime.strptime("2021-11-09T18:04:00.000000", "%Y-%m-%dT%H:%M:%S.%f"),
+         datetime.strptime("2021-11-09T19:14:00.000000", "%Y-%m-%dT%H:%M:%S.%f"))
