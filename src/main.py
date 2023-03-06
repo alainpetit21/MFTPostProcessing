@@ -1,5 +1,6 @@
 import csv
 import json
+from datetime import datetime
 
 
 def addModificationToTree(treeUp, lstData):
@@ -20,19 +21,28 @@ def addModificationToTree(treeUp, lstData):
         addModificationToTree(treeUp[1][data], lstData)
 
 
-def main():
+def isWithinDate(date, dateStart, dateEnd):
+    return dateStart <= date <= dateEnd
+
+
+def main(hostname, filenameIn, filenameOut, dateStart, dateEnd):
     """
         Main function of the script
     """
 
     # Read the CSV File
-    with open(f"./data/DeletedFiles_E.csv", mode="r", newline="\n") as fileInput:
+    with open(filenameIn, mode="r", newline="\n") as fileInput:
         objReader = csv.reader(fileInput)
 
         next(objReader)     # Skip header wor
-        cpt = 0
+        cptOut = 0
+        cptIn = 0
         treeModifications = [0, {}]
         while True:
+            cptIn += 1
+            if cptIn % 1000 == 0:
+                print(f"Processed In: {cptIn}")
+
             try:
                 row = next(objReader)
             except StopIteration as e1:
@@ -44,23 +54,78 @@ def main():
                 if e.args[0] == "line contains NUL":
                     continue
 
+            #ProcessFilteringByDate
+            isIn = False
+            for i in range(8, 16):
+                try:
+                    dateToTest = datetime.strptime(row[i], "%Y-%m-%d %H:%M:%S.%f")
+                    if isWithinDate(dateToTest, dateStart, dateEnd):
+                        isIn = True
+                except ValueError as e:
+                    continue
+                except IndexError as e:
+                    continue
+
+            if not isIn:
+                continue
+
+            #filter by isDirectory
+            if row[3][1] != "i":
+                continue
+
+            #filter by isInUsed
+            if row[2][0] != "A":
+                continue
+
+            #filter by fileSizeIsZero
+
+
+
             # Initiate the tree with the hostname
-            hostname = row[7]
             addModificationToTree(treeModifications, [hostname])
 
             # Then column 0 contains the full path where we organize in tree
-            groupFolder = row[0].split("\\")
+            groupFolder = row[7].split("/")
             addModificationToTree(treeModifications[1][hostname], groupFolder)
 
             # Debug information to show that things are still running
-            cpt += 1
-            if cpt % 1000 == 0:
-                print(f"Processed {cpt}")
+            cptOut += 1
+            if cptOut % 100 == 0:
+                print(f"\t\t\tProcessed Out: {cptOut}")
 
+        print(f"Completed!!")
         # Output a dump of the Dictionary as JSON
-        with open(f"./data/output.json", mode="w", newline="\n") as fileOutput:
+        with open(filenameOut, mode="w", newline="\n") as fileOutput:
             json.dump({"data": treeModifications}, fileOutput)
 
 
 if __name__ == '__main__':
-    main()
+    main("mft.raw", f"./data/mft.raw.out.csv", f"./data/mft.raw.out.csv.json",
+         datetime.strptime("2023-01-27T00:00:00.000000", "%Y-%m-%dT%H:%M:%S.%f"),
+         datetime.strptime("2023-01-28T00:00:00.000000", "%Y-%m-%dT%H:%M:%S.%f"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
